@@ -48,16 +48,16 @@ loader.load(
     render();
   },
   (xhr) => {
-    console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+    // console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
   },
   (error) => {
-    console.log(error)
+    // console.log(error)
   }
 )
 
 let scroll = false;
 function onScrollWheel(e) {
-  console.log(e.deltaY, "scroll");
+  // console.log(e.deltaY, "scroll");
   if (e.deltaY > 0) {
     // scrolling down
     scroll = true;
@@ -128,7 +128,7 @@ document.body.onscroll = () => {
     100
     ;
 
-  console.log(scrollPercent.toFixed(2), "scrollPercent");
+  // console.log(scrollPercent.toFixed(2), "scrollPercent");
 }
 
 window.addEventListener("wheel", onScrollWheel);
@@ -157,4 +157,30 @@ function render() {
 }
 render();
 
-window.scrollTo({ top: 0, behavior: 'smooth' })
+window.scrollTo({ top: 0, behavior: 'smooth' });
+
+
+
+// JS functionality for text animation
+
+const banner = document.querySelector('.banner');
+const client = document.querySelectorAll('.client')
+
+const docElem = [banner, ...client]
+
+console.log(docElem)
+
+const options =  { 
+  rootMargin: '10px',
+  threshold: .5
+}
+
+const handleIntersect = (entries) => {
+  entries.forEach(entry => {
+    entry.target.classList.toggle('reveal', entry.isIntersecting)
+  })
+}
+
+let observer = new IntersectionObserver(handleIntersect, options)
+
+docElem.forEach(elem => observer.observe(elem))
