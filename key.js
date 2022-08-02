@@ -3,11 +3,11 @@ const canvas = document.getElementById('keys');
 const scene = new THREE.Scene();
 let model = null;
 
-const gridHelper = new THREE.GridHelper(10, 10, 0xaec6cf, 0xaec6cf)
-scene.add(gridHelper);
+// const gridHelper = new THREE.GridHelper(10, 10, 0xaec6cf, 0xaec6cf)
+// scene.add(gridHelper);
 
-const color = new THREE.Color('white');
-scene.background = color;
+// const color = new THREE.Color('white', 0);
+// scene.background = null;
 
 const light = new THREE.AmbientLight(0xffffff, 1)
 light.position.z = 5.0;
@@ -25,11 +25,11 @@ const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0xffffff, 0);
 
 camera.position.set(0, 0, 10);
-camera.rotation.z = 1;
+camera.rotation.z = 5.2;
 
-let initPivot = 1;
 const loader = new THREE.GLTFLoader();
 
 const dracoLoader = new THREE.DRACOLoader();
@@ -42,16 +42,17 @@ loader.load(
     model = gltf.scene
     model.position.set(0, 0, 0);
     model.scale.set(0.15, 0.15, 0.15);
+    model.rotation.x = 0;
     // model.rotation.z = initPivot;
     // model.quaternion.copy(targetRotation);
     scene.add(model);
     render();
   },
   (xhr) => {
-    // console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
+    console.log((xhr.loaded / xhr.total) * 100 + '% loaded')
   },
   (error) => {
-    // console.log(error)
+    console.log(error)
   }
 )
 
@@ -84,25 +85,23 @@ animationScripts.push({
   start: 0,
   end: 40,
   func: () => {
-    // camera.lookAt(model.position);
-    model.rotation.x = lerp(0, 10, scalePercent(0, 40));
-    camera.rotation.z = lerp(1, 0, scalePercent(0, 40));
-    // if (scroll < 0) {
-    //   rotZ = initPivot - 0.1;
-    //   model.rotation.z = rotZ;
-    // } else if (scroll > 0) {
-    //   rotZ = initPivot + 0.1;
-    // model.rotateOnAxis(new THREE.Vector3(1, 0, 0), -0.1);
-
+    model.rotation.x = lerp(0, 6.3, scalePercent(0, 40));
+    if (scrollPercent === 0) {
+      camera.rotation.z = 5.2
+    } else if (scrollPercent === 40) {
+      camera.rotation.z = 6.3
+    } else {
+      camera.rotation.z = lerp(5.2, 6.3, scalePercent(0, 40));
+    }
   }
 }
 )
 
 animationScripts.push({
-  start: 40,
-  end: 101,
+  start: 41,
+  end: 100,
   func: () => {
-    model.rotation.x = lerp(10, 17.5, scalePercent(40, 100));
+    model.rotation.x = lerp(2 * Math.PI, 4 * Math.PI, scalePercent(40, 100));
   }
 })
 
@@ -128,7 +127,8 @@ document.body.onscroll = () => {
     100
     ;
 
-  // console.log(scrollPercent.toFixed(2), "scrollPercent");
+  console.log(scrollPercent.toFixed(2), "scrollPercent");
+  console.log(model.rotation.x, "rotation");
 }
 
 window.addEventListener("wheel", onScrollWheel);
@@ -170,7 +170,7 @@ const docElem = [banner, ...client]
 
 console.log(docElem)
 
-const options =  { 
+const options = {
   rootMargin: '10px',
   threshold: .5
 }
